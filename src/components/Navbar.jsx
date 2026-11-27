@@ -1,10 +1,6 @@
 import { useState } from "react";
-<<<<<<< HEAD
-import { Link, NavLink } from "react-router-dom";
-=======
 import { NavLink, Link } from "react-router-dom";
 import { Flame, Sparkles, User, LogOut, Menu, X } from "lucide-react";
->>>>>>> b3b292f831a4e6575ebf3da3cde0aaeefcdf339a
 
 export default function Navbar({ user, onLogout }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -81,7 +77,7 @@ export default function Navbar({ user, onLogout }) {
             </>
           ) : (
             <Link
-              to="/login"
+              to="/auth"
               className="flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-500"
             >
               <Sparkles className="h-4 w-4" />

@@ -66,7 +66,7 @@ export default function App() {
           />
           <Route path="/contact" element={<ContactPage />} />
           <Route
-            path="/login"
+            path="/auth"
             element={
               user ? (
                 <Navigate to="/profile" replace />
