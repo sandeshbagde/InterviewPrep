@@ -8,6 +8,7 @@ import ContactPage from "./pages/ContactPage";
 import AuthPage from "./pages/AuthPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import InterviewRoomPage from "./pages/InterviewRoomPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 export default function App() {
   const [activePage, setActivePage] = useState("home");
@@ -56,6 +57,7 @@ export default function App() {
   };
 
   return (
+    <BrowserRouter>
     <div className="flex min-h-screen flex-col bg-slate-950 text-white">
       <Navbar
         activePage={activePage}
@@ -64,9 +66,20 @@ export default function App() {
         onLogout={handleLogout}
       />
 
-      <main className="flex-1">{renderPage()}</main>
+    <main className="flex-1">
+            <Routes className="flex-1">
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/auth" element={<AuthPage />} />
+                {/*   <Route path="/progress" element={<Progress />} /> */}
+                 {/*    <Route path="/profile" element={<Profile />} /> */}
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                  </Routes>
+          </main>
 
       <Footer onNavigate={setActivePage} />
     </div>
+    </BrowserRouter>
   );
 }

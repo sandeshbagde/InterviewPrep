@@ -1,5 +1,6 @@
 import { Flame, Sparkles, UserCircle2, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 
 export default function Navbar({ activePage, onNavigate, user, onLogout }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
