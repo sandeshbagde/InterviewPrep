@@ -5,6 +5,7 @@ import VideoStage from "../components/interview/VideoStage";
 import LiveChatPanel from "../components/interview/LiveChatPanel";
 import PausedOverlay from "../components/interview/PausedOverlay";
 import InterviewSummary from "../components/interview/InterviewSummary";
+import EndConfirmModal from "../components/interview/EndConfirmModal";
 
 const QUESTION_BANK = {
   "Python & FastAPI Developer": [
@@ -50,6 +51,7 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState("");
   const [pauseCountdown, setPauseCountdown] = useState(PAUSE_GRACE_SECONDS);
+  const [showEndConfirm, setShowEndConfirm] = useState(false);
 
   const [aiStatus, setAiStatus] = useState("idle");
   const [currentCaption, setCurrentCaption] = useState("");
@@ -95,7 +97,6 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
       if (!document.fullscreenElement) {
         await document.documentElement.requestFullscreen();
       }
-      // Lock Escape key in Chrome/Edge so pressing Esc doesn't exit fullscreen
       if (navigator.keyboard && navigator.keyboard.lock) {
         await navigator.keyboard.lock(["Escape"]);
       }
@@ -115,6 +116,7 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
 
   const stopAllMedia = () => {
     isLiveRef.current = false;
+    setShowEndConfirm(false);
     clearTimeout(silenceTimerRef.current);
     window.speechSynthesis?.cancel();
     try {
@@ -136,16 +138,16 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
     return () => clearInterval(timer);
   }, [stage]);
 
-  // Handle Screen / Tab / Window Switch Violation with 3-Strike Warning
+  // Screen / Tab / Window Switch Violation Handler
   const handleLockdownViolation = (detailText) => {
     if (!isLiveRef.current) return;
 
-    // Debounce events fired simultaneously (blur + visibilitychange within 800ms = 1 strike)
     const now = Date.now();
     if (now - lastViolationTimeRef.current < 800) return;
     lastViolationTimeRef.current = now;
 
     isLiveRef.current = false;
+    setShowEndConfirm(false);
     clearTimeout(silenceTimerRef.current);
     window.speechSynthesis?.cancel();
     try {
@@ -171,7 +173,6 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
     setPauseCountdown(PAUSE_GRACE_SECONDS);
     setStage("paused");
 
-    // Speak warning aloud when candidate returns to the tab
     try {
       const warnSpeech = new SpeechSynthesisUtterance(
         `Warning ${nextStrike} of ${MAX_SCREEN_WARNINGS}. You cannot change your screen, otherwise your interview will end.`
@@ -180,7 +181,7 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
     } catch {}
   };
 
-  // LOCKDOWN EVENT LISTENERS (Alt+Tab, Windows key, Esc, Tab switch)
+  // LOCKDOWN EVENT LISTENERS
   useEffect(() => {
     if (stage !== "live" && stage !== "paused") return;
 
@@ -242,6 +243,7 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
     const onCameraLost = () => {
       if (!isLiveRef.current) return;
       isLiveRef.current = false;
+      setShowEndConfirm(false);
       clearTimeout(silenceTimerRef.current);
       window.speechSynthesis?.cancel();
       try {
@@ -549,7 +551,13 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
     setTimeout(() => speakAndListen(questions[0], false), 500);
   };
 
-  const handleEndEarly = () => {
+  // Opens warning dialog instead of immediately closing
+  const handleRequestEndInterview = () => {
+    setShowEndConfirm(true);
+  };
+
+  // Executed only after user confirms in EndConfirmModal
+  const handleConfirmEndInterview = () => {
     stopAllMedia();
     if (results.length > 0) setStage("summary");
     else onExit();
@@ -600,6 +608,16 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-slate-950 text-white select-none">
+      {/* Confirmation Warning Modal before ending interview */}
+      {showEndConfirm && (
+        <EndConfirmModal
+          answeredCount={results.length}
+          totalQuestions={questions.length}
+          onCancel={() => setShowEndConfirm(false)}
+          onConfirmEnd={handleConfirmEndInterview}
+        />
+      )}
+
       {/* Top Lockdown Header Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 bg-slate-900 px-6 py-3">
         <div className="flex items-center gap-3">
@@ -634,6 +652,10 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
             </span>
           ) : (
             <>
+              <span className="hidden items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-300 md:flex">
+                <Lock className="h-3.5 w-3.5 text-amber-400" />
+                Screen Locked
+              </span>
               <span className="hidden items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-300 sm:flex">
                 <Video className="h-3.5 w-3.5 text-indigo-400" />
                 Camera On
@@ -664,7 +686,7 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
           aiStatus={aiStatus}
           currentCaption={currentCaption}
           liveTranscript={liveTranscript}
-          onEndInterview={handleEndEarly}
+          onEndInterview={handleRequestEndInterview}
         >
           {stage === "paused" && (
             <PausedOverlay
@@ -675,7 +697,7 @@ export default function InterviewRoomPage({ role, onExit, onViewProgress }) {
               cameraError={cameraError}
               onReconnectCamera={handleManualReconnectCamera}
               onReenterFullscreen={handleReenterFullscreen}
-              onEndNow={handleEndEarly}
+              onEndNow={handleRequestEndInterview}
             />
           )}
         </VideoStage>
