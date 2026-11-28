@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import {
   User,
   Mail,
-  Briefcase,
   Award,
   CheckCircle2,
   LogOut,
@@ -13,13 +12,10 @@ import {
 
 export default function ProfilePage({ user, onUpdateUser, onLogout }) {
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/auth" replace />;
   }
 
   const [name, setName] = useState(user.name || "");
-  // const [targetRole, setTargetRole] = useState(
-  //    "Python & FastAPI Developer"
-  // );
   const [experience, setExperience] = useState(user.experience || "Fresher / 0-1 Years");
   const [skills, setSkills] = useState(
     user.skills || "Python, FastAPI, React.js, SQL, Tailwind CSS"
@@ -75,10 +71,6 @@ export default function ProfilePage({ user, onUpdateUser, onLogout }) {
 
       {/* Quick Stats */}
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        {/* <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
-          <p className="text-xs text-slate-400">Target Track</p>
-          <p className="mt-1 text-base font-bold text-white">{targetRole}</p>
-        </div> */}
         <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
           <p className="text-xs text-slate-400">Mock Interviews Taken</p>
           <p className="mt-1 text-2xl font-extrabold text-indigo-400">6 Sessions</p>
@@ -117,24 +109,6 @@ export default function ProfilePage({ user, onUpdateUser, onLogout }) {
             </div>
           </div>
 
-          {/* <div>
-            <label className="block text-xs font-medium text-slate-300">
-              Primary Interview Role
-            </label>
-            <div className="relative mt-1.5">
-              <Briefcase className="absolute top-3 left-3.5 h-4 w-4 text-slate-500" />
-              <select
-                value={targetRole}
-                onChange={(e) => setTargetRole(e.target.value)}
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 py-2.5 pr-4 pl-10 text-sm text-white focus:border-indigo-500 focus:outline-none"
-              >
-                <option value="Python & FastAPI Developer">Python & FastAPI Developer</option>
-                <option value="React.js Frontend Engineer">React.js Frontend Engineer</option>
-                <option value="Data Analyst (SQL & Pandas)">Data Analyst (SQL & Pandas)</option>
-              </select>
-            </div>
-          </div> */}
-
           <div>
             <label className="block text-xs font-medium text-slate-300">
               Experience Level
@@ -165,14 +139,6 @@ export default function ProfilePage({ user, onUpdateUser, onLogout }) {
         </div>
 
         <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-slate-800 pt-5">
-          {/* <button
-            type="button"
-            onClick={() => onStartInterview(targetRole)}
-            className="rounded-xl border border-indigo-500/40 bg-indigo-500/10 px-5 py-2.5 text-sm font-semibold text-indigo-300 transition hover:bg-indigo-500/20"
-          >
-            Practice {targetRole} Interview
-          </button> */}
-
           <button
             type="submit"
             className="flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-500"
