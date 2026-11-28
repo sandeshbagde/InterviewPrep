@@ -139,7 +139,7 @@ export default function Navbar({ user, onLogout }) {
             </div>
           ) : (
             <Link
-              to="/login"
+              to="/auth"
               onClick={() => setMobileOpen(false)}
               className="block w-full rounded-xl bg-indigo-600 py-2.5 text-center text-sm font-semibold text-white"
             >
