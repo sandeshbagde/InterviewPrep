@@ -11,15 +11,15 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-export default function ProfilePage({ user, onUpdateUser, onLogout, onStartInterview }) {
+export default function ProfilePage({ user, onUpdateUser, onLogout }) {
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
   const [name, setName] = useState(user.name || "");
-  const [targetRole, setTargetRole] = useState(
-    user.targetRole || "Python & FastAPI Developer"
-  );
+  // const [targetRole, setTargetRole] = useState(
+  //    "Python & FastAPI Developer"
+  // );
   const [experience, setExperience] = useState(user.experience || "Fresher / 0-1 Years");
   const [skills, setSkills] = useState(
     user.skills || "Python, FastAPI, React.js, SQL, Tailwind CSS"
@@ -31,7 +31,6 @@ export default function ProfilePage({ user, onUpdateUser, onLogout, onStartInter
     onUpdateUser({
       ...user,
       name: name.trim() || user.name,
-      targetRole,
       experience,
       skills,
     });
@@ -76,10 +75,10 @@ export default function ProfilePage({ user, onUpdateUser, onLogout, onStartInter
 
       {/* Quick Stats */}
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        {/* <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
           <p className="text-xs text-slate-400">Target Track</p>
           <p className="mt-1 text-base font-bold text-white">{targetRole}</p>
-        </div>
+        </div> */}
         <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
           <p className="text-xs text-slate-400">Mock Interviews Taken</p>
           <p className="mt-1 text-2xl font-extrabold text-indigo-400">6 Sessions</p>
@@ -118,7 +117,7 @@ export default function ProfilePage({ user, onUpdateUser, onLogout, onStartInter
             </div>
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-xs font-medium text-slate-300">
               Primary Interview Role
             </label>
@@ -134,7 +133,7 @@ export default function ProfilePage({ user, onUpdateUser, onLogout, onStartInter
                 <option value="Data Analyst (SQL & Pandas)">Data Analyst (SQL & Pandas)</option>
               </select>
             </div>
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-xs font-medium text-slate-300">
@@ -166,13 +165,13 @@ export default function ProfilePage({ user, onUpdateUser, onLogout, onStartInter
         </div>
 
         <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-t border-slate-800 pt-5">
-          <button
+          {/* <button
             type="button"
             onClick={() => onStartInterview(targetRole)}
             className="rounded-xl border border-indigo-500/40 bg-indigo-500/10 px-5 py-2.5 text-sm font-semibold text-indigo-300 transition hover:bg-indigo-500/20"
           >
             Practice {targetRole} Interview
-          </button>
+          </button> */}
 
           <button
             type="submit"
