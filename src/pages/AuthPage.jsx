@@ -24,8 +24,14 @@ export default function AuthPage({ onAuthSuccess }) {
       return;
     }
 
-    const displayName =
-      isRegister && name.trim() ? name.trim() : trimmedEmail.split("@")[0];
+    const displayName = isRegister
+      ? (/^[A-Za-z ]{4,}$/.test(name.trim()) ? name.trim() : null)
+      : "";
+
+    if (isRegister && !displayName) {
+      setError("Please enter a valid name (minimum 4 letters, alphabets only).");
+      return; }
+
 
     onAuthSuccess({
       name: displayName,
